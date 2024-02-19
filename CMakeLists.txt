@@ -4,7 +4,7 @@ project(Project1)
 set(CMAKE_CXX_STANDARD 14)
 
 #compile flags to match Gradescope test environment
-set(GCC_COVERAGE_COMPILE_FLAGS "-Wall -Werror") # remove -Werror if there are problems with Visual Studio
+set(GCC_COVERAGE_COMPILE_FLAGS "-Wall") # remove -Werror if there are problems with Visual Studio
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 
 ##pull in desired version of catch through cmake automatically, make it available
@@ -21,6 +21,8 @@ include_directories(src)
 
 add_executable(Main
         src/main.cpp # your test file
+        src/tree.h 
+        src/tree.cpp
         # add your own header files below - should be automatically added in CLion
         # ex: src/AVL.h src/AVL.cpp
         )
@@ -30,6 +32,8 @@ add_executable(Tests
         test/test.cpp # your test file
         # add your own header files below - should be automatically added in CLion
         # ex: src/AVL.h src/AVL.cpp
+        src/tree.cpp
+        src/tree.h
         )
         
 target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain) #link catch to test.cpp file
