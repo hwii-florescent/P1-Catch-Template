@@ -1,62 +1,84 @@
 #include "tree.h"
+#include <limits>
 
+vector<string> split(const string& s, char delimiter) {
+    vector<string> tokens;
+    stringstream ss(s);
+    string token;
+    while (getline(ss, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
 
 int main() {
-    // GatorTree tree;   
+    GatorTree tree;   
 
-    // // Inserting some nodes into the tree
-    // tree.insertAllocatedRoot(45679999, "Brandon");
-    // tree.insertAllocatedRoot(35459999, "Brian");
-    // tree.insertAllocatedRoot(87879999, "Briana");
-    // tree.insertAllocatedRoot(95469999, "Bella");
+    int numCommands;
+    cin >> numCommands;
+    cin.ignore(); // Ignore the newline character after reading the number of commands
 
+    // Process each command
+    for (int i = 0; i < numCommands; ++i) {
+        string command;
+        getline(cin, command);
 
-    // // Printing the inorder traversal of the tree
-    // cout << "Inorder Traversal: ";
-    // tree.printInOrder(tree.rootNode);
+        vector<string> tokens = split(command, ' ');
 
-    // tree.removeAllocatedRoot(45679999);
-    // tree.printInOrder(tree.rootNode);
-
-    // tree.removeInOrder(tree.rootNode, 2);
-    // tree.printInOrder(tree.rootNode);
-
-    // int numCommands;
-    // cin >> numCommands;
-    // cin.ignore(); // Ignore the newline character after reading the number of commands
-
-    // // Process each command
-    // for (int i = 0; i < numCommands; ++i) {
-    //     string command;
-    //     getline(cin, command);
-
-    //     // Parse the command
-    //     stringstream ss(command);
-    //     string operation;
-    //     ss >> operation;
-
-    //     if (operation == "insert") {
-    //         string name;
-    //         int id;
-    //         ss.ignore(1); // Ignore the space after "insert"
-    //         ss.ignore(1, '"'); // Ignore the opening double quote
-    //         getline(ss, name, '"'); // Read the name
-    //         ss >> id; // Read the ID
-    //         tree.insertAllocatedRoot(id, name);
-    //     } else if (operation == "remove") {
-    //         int id;
-    //         ss >> id;
-    //         tree.removeAllocatedRoot(id);
-    //     } else if (operation == "removeInorder") {
-    //         int N;
-    //         ss >> N;
-    //         tree.removeInOrder(tree.rootNode, N);
-    //     } else if (operation == "printInorder") {
-    //         cout << "Inorder Traversal: ";
-    //         tree.printInOrder(tree.rootNode);
-    //     } else {
-    //         cout << "Invalid command: " << operation << endl;
-    //     }
-    // }
+        if (tokens[0] == "insert" && tokens.size() == 3) {
+            // Insert command: insert NAME ID
+            if (tokens[1].size() > 2 && tokens[1].front() == '"' && tokens[1].back() == '"' && tokens[2].find_first_not_of("0123456789") == string::npos) {
+                // Valid format
+                string name = tokens[1].substr(1, tokens[1].size() - 2); // Remove quotes
+                int id = stoi(tokens[2]);
+                tree.insertAllocatedRoot(id, name);
+            } else {
+                cout << "unsuccessful" << endl;
+            }
+        } else if (tokens[0] == "remove" && tokens.size() == 2) {
+            // Remove command: remove ID
+            int id = stoi(tokens[1]);
+            tree.removeAllocatedRoot(id);
+        } else if (tokens[0] == "search" && tokens.size() == 2) {
+            // Search command: search ID/NAME
+            if (tokens[1].find_first_not_of("0123456789") == string::npos) {
+                // Search by ID
+                int id = stoi(tokens[1]);
+                int isValid = 0;
+                tree.searchName(tree.rootNode, id, isValid);
+                if (isValid == 0) {
+                    cout << "unsuccessful" << endl;
+                }
+            } else if (tokens[1].size() > 2 && tokens[1].front() == '"' && tokens[1].back() == '"') {
+                // Search by NAME
+                string name = tokens[1].substr(1, tokens[1].size() - 2); // Remove quotes
+                int isValid = 0;
+                tree.searchID(tree.rootNode, name, isValid);
+                if (isValid == 0) {
+                    cout << "unsuccessful" << endl;
+                }
+            } else {
+                cout << "unsuccessful" << endl;
+            }
+        } else if (tokens[0] == "printInorder" && tokens.size() == 1) {
+            // Print inorder command
+            tree.printInOrder(tree.rootNode);
+        } else if (tokens[0] == "printPreorder" && tokens.size() == 1) {
+            // Print preorder command
+            tree.printPreOrder(tree.rootNode);
+        } else if (tokens[0] == "printPostorder" && tokens.size() == 1) {
+            // Print postorder command
+            tree.printPostOrder(tree.rootNode);
+        } else if (tokens[0] == "printLevelCount" && tokens.size() == 1) {
+            // Print level count command
+            tree.printLevelCount(tree.rootNode);
+        } else if (tokens[0] == "removeInorder" && tokens.size() == 2) {
+            // Remove by inorder traversal index: removeInorder N
+            int N = stoi(tokens[1]);
+            tree.removeInOrder(tree.rootNode, N);
+        } else {
+            cout << "unsuccessful" << endl;
+        }
+    }
 	return 0;
 }
