@@ -1,5 +1,6 @@
 #include "tree.h"
 #include <limits>
+#pragma once
 
 //Support function to split the command to take in input and put in a vector
 vector<string> split(const string& command, char delimiter) {
@@ -12,7 +13,7 @@ vector<string> split(const string& command, char delimiter) {
     return result;
 }
 
-void runInput(GatorTree* tree ,string command) {
+void runInput(GatorTree& tree ,string command) {
     vector<string> inp = split(command, ' ');
 
     if (inp[0] == "insert" && inp.size() == 3) {
@@ -21,47 +22,47 @@ void runInput(GatorTree* tree ,string command) {
             // Valid format
             string name = inp[1].substr(1, inp[1].size() - 2); // Remove quotes
             int id = stoi(inp[2]);
-            tree->insertAllocatedRoot(id, name);
+            tree.insertAllocatedRoot(id, name);
         } else {
             cout << "unsuccessful" << endl;
         }
     } else if (inp[0] == "remove" && inp.size() == 2) {
         // Remove command
         int id = stoi(inp[1]);
-        tree->removeAllocatedRoot(id);
+        tree.removeAllocatedRoot(id);
     } else if (inp[0] == "search" && inp.size() == 2) {
         // Search command
         if (inp[1].find_first_not_of("0123456789") == string::npos) {
             // Search by ID
             int id = stoi(inp[1]);
             int isValid = 0;
-            tree->searchName(tree->rootNode, id, isValid);
-            tree->existChecker(isValid);
+            tree.searchName(tree.rootNode, id, isValid);
+            tree.existChecker(isValid);
         } else if (inp[1].size() > 2 && inp[1].front() == '"' && inp[1].back() == '"') {
             // Search by NAME
             string name = inp[1].substr(1, inp[1].size() - 2); // Remove quotes
             int isValid = 0;
-            tree->searchID(tree->rootNode, name, isValid);
-            tree->existChecker(isValid);
+            tree.searchID(tree.rootNode, name, isValid);
+            tree.existChecker(isValid);
         } else {
             cout << "unsuccessful" << endl;
         }
     } else if (inp[0] == "printInorder" && inp.size() == 1) {
         // Print inorder command
-        tree->printInOrder(tree->rootNode);
+        tree.printInOrder(tree.rootNode);
     } else if (inp[0] == "printPreorder" && inp.size() == 1) {
         // Print preorder command
-        tree->printPreOrder(tree->rootNode);
+        tree.printPreOrder(tree.rootNode);
     } else if (inp[0] == "printPostorder" && inp.size() == 1) {
         // Print postorder command
-        tree->printPostOrder(tree->rootNode);
+        tree.printPostOrder(tree.rootNode);
     } else if (inp[0] == "printLevelCount" && inp.size() == 1) {
         // Print level count command
-        tree->printLevelCount(tree->rootNode);
+        tree.printLevelCount(tree.rootNode);
     } else if (inp[0] == "removeInorder" && inp.size() == 2) {
         // Remove by inorder traversal index
         int N = stoi(inp[1]);
-        tree->removeInOrder(tree->rootNode, N);
+        tree.removeInOrder(tree.rootNode, N);
     } else {
         cout << "unsuccessful" << endl;
     }

@@ -1,8 +1,8 @@
+#include "tree.h"
 #include "helper.h"
-
 int main() {
     //Create the AVL tree
-    GatorTree* tree = new GatorTree();   
+    GatorTree tree;   
 
     //Take in the number that determine the number of commands
     int num;
