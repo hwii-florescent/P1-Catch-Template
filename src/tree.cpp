@@ -1,4 +1,5 @@
 #include "tree.h"
+
 // Destructor for the GatorTree
 void GatorTree::deleteTree(Node *_rootNode) {
 	// Calling recursive functions to delete each node of both subtrees
@@ -158,7 +159,9 @@ void GatorTree::postOrder(Node *_rootNode, vector<string> &traversalVector) {
 
 // Pre Order
 void GatorTree::preOrder(Node *_rootNode, vector<string> &traversalVector) {
-	if (_rootNode) {
+	if (_rootNode == nullptr) {
+		NULL;
+	} else {
 		traversalVector.push_back(_rootNode->studentName);
 		preOrder(_rootNode->left, traversalVector);
 		preOrder(_rootNode->right, traversalVector);
