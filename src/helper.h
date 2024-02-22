@@ -1,5 +1,6 @@
 #include "tree.h"
 #include <limits>
+#include <sstream>
 #pragma once
 
 //Support function to split the command to take in input and put in a vector
@@ -15,10 +16,11 @@ vector<string> split(const string& command, char delimiter) {
 
 void runInput(GatorTree& tree ,string command) {
     vector<string> inp = split(command, ' ');
-
+    string numeric = "0123456789";
+    string alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     if (inp[0] == "insert" && inp.size() == 3) {
         // Insert command
-        if (inp[1].size() > 2 && inp[1].front() == '"' && inp[1].back() == '"' && inp[2].find_first_not_of("0123456789") == string::npos) {
+        if (inp[1].size() > 2 && inp[1].front() == '"' && inp[1].back() == '"' && inp[1].find_first_not_of(alphabet) == string::npos && inp[2].find_first_not_of(numeric) == string::npos) {
             // Valid format
             string name = inp[1].substr(1, inp[1].size() - 2); // Remove quotes
             int id = stoi(inp[2]);
@@ -28,11 +30,15 @@ void runInput(GatorTree& tree ,string command) {
         }
     } else if (inp[0] == "remove" && inp.size() == 2) {
         // Remove command
-        int id = stoi(inp[1]);
-        tree.removeAllocatedRoot(id);
+        if (inp[1].find_first_not_of(numeric) == string::npos) {
+            int id = stoi(inp[1]);
+            tree.removeAllocatedRoot(id);
+        } else {
+            cout << "unsuccessful" << endl;
+        }
     } else if (inp[0] == "search" && inp.size() == 2) {
         // Search command
-        if (inp[1].find_first_not_of("0123456789") == string::npos) {
+        if (inp[1].find_first_not_of(numeric) == string::npos) {
             // Search by ID
             int id = stoi(inp[1]);
             int isValid = 0;
@@ -61,8 +67,12 @@ void runInput(GatorTree& tree ,string command) {
         tree.printLevelCount(tree.rootNode);
     } else if (inp[0] == "removeInorder" && inp.size() == 2) {
         // Remove by inorder traversal index
-        int N = stoi(inp[1]);
-        tree.removeInOrder(tree.rootNode, N);
+        if (inp[1].find_first_not_of(numeric) == string::npos) {
+            int N = stoi(inp[1]);
+            tree.removeInOrder(tree.rootNode, N);
+        } else {
+            cout << "unsuccessful" << endl;
+        }
     } else {
         cout << "unsuccessful" << endl;
     }

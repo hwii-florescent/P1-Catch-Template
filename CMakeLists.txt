@@ -21,8 +21,9 @@ include_directories(src)
 
 add_executable(Main
         src/main.cpp # your test file
-        src/tree.h 
+        src/tree.h
         src/tree.cpp
+        src/helper.h
         # add your own header files below - should be automatically added in CLion
         # ex: src/AVL.h src/AVL.cpp
         )
@@ -32,8 +33,9 @@ add_executable(Tests
         test/test.cpp # your test file
         # add your own header files below - should be automatically added in CLion
         # ex: src/AVL.h src/AVL.cpp
-        src/tree.cpp
         src/tree.h
+        src/tree.cpp
+        src/helper.h
         )
         
 target_link_libraries(Tests PRIVATE Catch2::Catch2WithMain) #link catch to test.cpp file
