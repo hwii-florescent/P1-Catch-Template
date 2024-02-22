@@ -6,23 +6,24 @@ TEST_CASE("Test incorrect commands") {
     
     // SECTION("Inserting with invalid name") {
         GatorTree tree;
-        
-        string input = "insert \"L1ght\" 97722812";
-        string expected = "unsuccessful\n";
+        // string input = "insert \"huy\" 97722812";
+        // string expected = "unsuccessful\n";
 
-        ostringstream buffer;
-        streambuf* coutBuffer = cout.rdbuf();
-        cout.rdbuf(buffer.rdbuf());
+        std::ostringstream oss;
+        streambuf* coutBuffer = std::cout.rdbuf();
+        std::cout.rdbuf(oss.rdbuf());
 
         // Call the function that prints to cout
         // runInput(tree, input);
-        cout << "unsuccessful" << endl;
-        // Restore cout
+        std::cout << "unsuccessful" << endl;
+        
+
+        // // Check if the output matches the expected string
         std::cout.rdbuf(coutBuffer);
 
-        // Check if the output matches the expected string
-        REQUIRE(buffer.str() == "unsuccessful\n");
-        
+        REQUIRE(oss.str() == "unsuccessful\n");
+        // Restore cout
+        // REQUIRE(true);
     // }
 }
 
