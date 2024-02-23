@@ -1,38 +1,38 @@
 #include "tree.h"
+//implementing the definitions for the class method
 
-// Destructor for the GatorTree
 void GatorTree::deleteTree(Node *_rootNode) {
-	// Calling recursive functions to delete each node of both subtrees
-	//left
-	if (_rootNode->right != nullptr) {
+	//use recursion to delete every node of the tree
+	
+	if (_rootNode->right != nullptr) {		//go to the left
 		deleteTree(_rootNode->right);
 	}
-	//right
-	if (_rootNode->left != nullptr) {
+	if (_rootNode->left != nullptr) {		//go to the right
 		deleteTree(_rootNode->left);
 	}
-	delete _rootNode;
+	//delete the root
+	if (_rootNode != nullptr) {
+		delete _rootNode;
+	}
 }
 
-// Insertion method - based on lecture slides
 Node *GatorTree::insert(Node *_rootNode, int _id, string _name) {
-	// If there is no node there, insert and return
-	// and for empty GatorTree
+	//insert the node at an empty place or when the tree is empty
 	if (_rootNode == nullptr) {
 		cout << "successful\n";
 		return new Node(_id, _name);
 	}
-		// If ID is bigger, go to right subtree
+	//if ID is bigger than current, go to the right subtree
 	else if (_id > _rootNode->gatorId) {
 		_rootNode->right = insert(_rootNode->right, _id, _name);
 		_rootNode = balanceTree(_rootNode);
 	}
-		// If ID is smaller, go to left subtree
+	//if ID is smaller than current, go to the left subtree
 	else if (_id < _rootNode->gatorId) {
 		_rootNode->left = insert(_rootNode->left, _id, _name);
 		_rootNode = balanceTree(_rootNode);
 	}
-		// If equal
+	//if it is equal we dont insert the node and return unsuccessful
 	else if (_id == _rootNode->gatorId) {
 		cout << "unsuccessful\n";
 	}
@@ -42,6 +42,7 @@ Node *GatorTree::insert(Node *_rootNode, int _id, string _name) {
 }
 
 Node *GatorTree::getInorderSuccessor(Node *rightSubNode) {
+	//loop until the end of left tree
 	while (rightSubNode->left != nullptr) {
 		rightSubNode = rightSubNode->left;
 	}
@@ -49,55 +50,50 @@ Node *GatorTree::getInorderSuccessor(Node *rightSubNode) {
 	return rightSubNode;
 }
 
-// Method to remove node by ID
 Node *GatorTree::removeID(Node *_rootNode, int _id) {
-	if (_rootNode == nullptr) {
+	if (_rootNode == nullptr) {		//unsuccessful if tree is empty
 		cout << "unsuccessful\n";
 		return _rootNode;
-	} else if (_id > _rootNode->gatorId) {
+	} else if (_id > _rootNode->gatorId) {		//if larger than current, go to right tree
 		_rootNode->right = removeID(_rootNode->right, _id);
-	} else if (_id < _rootNode->gatorId) {
+	} else if (_id < _rootNode->gatorId) {		//if smaller than current, go to left tree
 		_rootNode->left = removeID(_rootNode->left, _id);
 	}
-		// If ID is found
+	//delete the node based on the case
 	else if (_id == _rootNode->gatorId) {
 		// Seperated into different cases for removal
 		if (_rootNode->left == nullptr && _rootNode->right == nullptr) {
 			cout << "successful\n";
-			return nullptr;
+			return _rootNode;
 		}
-			// If there is only 1 right child
+		//only one right child
 		else if (_rootNode->left == nullptr) {
 			cout << "successful\n";
 			Node *newNode = _rootNode->right;
 			delete _rootNode;
 			return newNode;
 		}
-			// If there is only 1 left child
+		//only one left child
 		else if (_rootNode->right == nullptr) {
 			cout << "successful\n";
 			Node *newNode = _rootNode->left;
 			delete _rootNode;
 			return newNode;
 		}
-			// If there are 2 children
+		//there are two child nodes
 		else {
-			// Find in order successor, set value then delete it
+			//find the inorder successor to find and delete it
 			Node *newNode = getInorderSuccessor(_rootNode->right);
 			_rootNode->gatorId = newNode->gatorId;
 			_rootNode->studentName = newNode->studentName;
 			_rootNode->right = removeID(_rootNode->right, _rootNode->gatorId);
 			// return
 		}
-
 	}
-
-
 	return _rootNode;
 
 };
 
-// allocate root after inserting method
 void GatorTree::insertAllocatedRoot(int _id, string _name) {
 	rootNode = insert(rootNode, _id, _name);
 	treeHeight = findLevelCount(rootNode);
@@ -108,26 +104,23 @@ void GatorTree::removeAllocatedRoot(int _id) {
 	treeHeight = findLevelCount(rootNode);
 }
 
-
-// find the level - based on lectures slides
-int GatorTree::findLevelCount(Node *_rootNode) {
+int GatorTree::findLevelCount(Node *_rootNode) {		//recursive through two sides of the tree to find the level
 	if (_rootNode == nullptr) {
 		return 0;
 	} else {
 		return 1 + max(findLevelCount(_rootNode->left), findLevelCount(_rootNode->right));
 	}
-
 }
 
-// method to print level count
-void GatorTree::printLevelCount(Node *_rootNode) {
-	treeHeight = findLevelCount(_rootNode);
-	cout << findLevelCount(_rootNode) << endl;
+void GatorTree::printLevelCount(Node *_rootNode) {		//print out the treeHeight
+	if (_rootNode != nullptr) {
+		treeHeight = findLevelCount(_rootNode);
+		cout << treeHeight << endl;
+	}
 }
 
 
-// method to inorder traverse through tree
-void GatorTree::inOrder(Node *_rootNode, vector<string> &traversalVector) {
+void GatorTree::inOrder(Node *_rootNode, vector<string> &traversalVector) {		//recursion to traverse through all nodes
 	if (_rootNode) {
 		inOrder(_rootNode->left, traversalVector);
 		traversalVector.push_back(_rootNode->studentName);
@@ -135,108 +128,101 @@ void GatorTree::inOrder(Node *_rootNode, vector<string> &traversalVector) {
 	}
 }
 
-// method to inorder traverse through tree, but return a vector of nodes
-void GatorTree::inOrderNodes(Node *_rootNode, vector<Node *> &traversalVector) {
-	if (_rootNode == nullptr) {
-		NULL;
-	} else {
+void GatorTree::inOrderNodes(Node *_rootNode, vector<Node *> &traversalVector) {		//recursion to traverse through all nodes
+	if (_rootNode) {
 		inOrderNodes(_rootNode->left, traversalVector);
 		traversalVector.push_back(_rootNode);
 		inOrderNodes(_rootNode->right, traversalVector);
 	}
 }
 
-// Post Order
-void GatorTree::postOrder(Node *_rootNode, vector<string> &traversalVector) {
-	if (_rootNode == nullptr) {
-		NULL;
-	} else {
+void GatorTree::postOrder(Node *_rootNode, vector<string> &traversalVector) {		//recursion to traverse through all nodes
+	if (_rootNode) {
 		postOrder(_rootNode->left, traversalVector);
 		postOrder(_rootNode->right, traversalVector);
 		traversalVector.push_back(_rootNode->studentName);
 	}
 }
 
-// Pre Order
-void GatorTree::preOrder(Node *_rootNode, vector<string> &traversalVector) {
-	if (_rootNode == nullptr) {
-		NULL;
-	} else {
+void GatorTree::preOrder(Node *_rootNode, vector<string> &traversalVector) {		//recursion to traverse through all nodes
+	if (_rootNode) {
 		traversalVector.push_back(_rootNode->studentName);
 		preOrder(_rootNode->left, traversalVector);
 		preOrder(_rootNode->right, traversalVector);
 	}
 }
 
-// Print Methods
 void GatorTree::printInOrder(Node *_rootNode) {
-	vector<string> nodeVector;
-	inOrder(_rootNode, nodeVector);
-	for (int i = 0; i < nodeVector.size(); ++i) {
-		if (i == nodeVector.size() - 1) {
-			cout << nodeVector[i] << endl;
-		} else {
-			cout << nodeVector[i] << ", ";
+	if (_rootNode != nullptr) {
+		vector<string> nodeVector;
+		inOrder(_rootNode, nodeVector);
+		for (int i = 0; i < nodeVector.size(); ++i) {
+			if (i == nodeVector.size() - 1) {
+				cout << nodeVector[i] << endl;
+			} else {
+				cout << nodeVector[i] << ", ";
+			}
 		}
 	}
+	
 
 }
 
-// METHODS FOR PRINTING
 void GatorTree::printPreOrder(Node *_rootNode) {
-	vector<string> nodeVector;
-	preOrder(_rootNode, nodeVector);
-	for (int i = 0; i < nodeVector.size(); ++i) {
-		if (i == nodeVector.size() - 1) {
-			cout << nodeVector[i] << endl;
-		} else {
-			cout << nodeVector[i] << ", ";
+	if (_rootNode != nullptr) {
+		vector<string> nodeVector;
+		preOrder(_rootNode, nodeVector);
+		for (int i = 0; i < nodeVector.size(); ++i) {
+			if (i == nodeVector.size() - 1) {
+				cout << nodeVector[i] << endl;
+			} else {
+				cout << nodeVector[i] << ", ";
+			}
 		}
 	}
-
 }
 
 void GatorTree::printPostOrder(Node *_rootNode) {
-	vector<string> nodeVector;
-	postOrder(_rootNode, nodeVector);
-	for (int i = 0; i < nodeVector.size(); ++i) {
-		if (i == nodeVector.size() - 1) {
-			cout << nodeVector[i] << endl;
-		} else {
-			cout << nodeVector[i] << ", ";
+	if (_rootNode != nullptr) {
+		vector<string> nodeVector;
+		postOrder(_rootNode, nodeVector);
+		for (int i = 0; i < nodeVector.size(); ++i) {
+			if (i == nodeVector.size() - 1) {
+				cout << nodeVector[i] << endl;
+			} else {
+				cout << nodeVector[i] << ", ";
+			}
 		}
 	}
-
 }
 
-// Method to search for student's name and print all IDs under the same name in preorder
-int GatorTree::searchID(Node *_rootNode, string name, int &isValid) {
-	// Use isValid to check if the name exists, if not, it will return 0 (passed on to checker method)
+int GatorTree::searchName(Node *_rootNode, string name, int &isValid) {
 	if (_rootNode == nullptr) {
 		return 0;
 	}
-	if (_rootNode->studentName == name) {
+	if (_rootNode->studentName == name) {		//print out the ID of all students with that name
 		cout << _rootNode->gatorId << endl;
+		//isValid to check if the name exists, if not, it will return 0 (passed on to checker method)
 		++isValid;
 	}
+	//recursively go through all the nodes
+	if (_rootNode->left != nullptr)
+	searchName(_rootNode->left, name, isValid);
 
-	searchID(_rootNode->left, name, isValid);
-
-	searchID(_rootNode->right, name, isValid);
+	if (_rootNode->right != nullptr)
+	searchName(_rootNode->right, name, isValid);
 
 	return isValid;
 }
 
-// checker: if condition is 0, then the name does not exist.
-int GatorTree::existChecker(int condition) {
+int GatorTree::existChecker(int condition) {		//if condition is 0, then the name or id does not exist.
 	if (condition == 0) {
 		cout << "unsuccessful" << endl;
 	}
 	return 0;
 }
 
-// Method to search for name
-int GatorTree::searchName(Node *_rootNode, int _id, int &isValid) {
+int GatorTree::searchID(Node *_rootNode, int _id, int &isValid) {		//search for the name of the student with the given id and print it out
 	if (_rootNode == nullptr) {
 		return 0;
 	}
@@ -244,19 +230,20 @@ int GatorTree::searchName(Node *_rootNode, int _id, int &isValid) {
 		cout << _rootNode->studentName << endl;
 		++isValid;
 	}
+	//recursively go through all the node
+	if (_rootNode->left != nullptr)
+	searchID(_rootNode->left, _id, isValid);
 
-	searchName(_rootNode->left, _id, isValid);
-
-	searchName(_rootNode->right, _id, isValid);
+	if (_rootNode->right != nullptr)
+	searchID(_rootNode->right, _id, isValid);
 
 	return isValid;
 }
 
-// Method to Remove In Order
 void GatorTree::removeInOrder(Node *_rootNode, int N) {
 	vector<Node *> traversal;
 	inOrderNodes(_rootNode, traversal);
-	if (N < traversal.size()) {
+	if (N < traversal.size()) {		//remove in order
 		removeID(_rootNode, traversal[N]->gatorId);
 	} else {
 		cout << "unsuccessful\n";
@@ -264,7 +251,7 @@ void GatorTree::removeInOrder(Node *_rootNode, int N) {
 
 }
 
-// Rotate Left
+//left rotate
 Node *GatorTree::rotateLeft(Node *_rootNode) {
 	Node *right = _rootNode->right;
 	_rootNode->right = right->left;
@@ -273,7 +260,7 @@ Node *GatorTree::rotateLeft(Node *_rootNode) {
 }
 
 
-// Rotate Right
+//right rotate
 Node *GatorTree::rotateRight(Node *_rootNode) {
 	Node *left = _rootNode->left;
 	_rootNode->left = left->right;
@@ -281,21 +268,21 @@ Node *GatorTree::rotateRight(Node *_rootNode) {
 	return left;
 }
 
-// Rotate left right
+//left right rotate
 Node *GatorTree::rotateLeftRight(Node *_rootNode) {
 	_rootNode->left = rotateLeft(_rootNode->left);
 	_rootNode = rotateRight(_rootNode);
 	return _rootNode;
 }
 
-// Rotate right left
+//right left rotate
 Node *GatorTree::rotateRightLeft(Node *_rootNode) {
 	_rootNode->right = rotateRight(_rootNode->right);
 	_rootNode = rotateLeft(_rootNode);
 	return _rootNode;
 }
 
-// Method to find the balance factor
+//find the balance factor from two sides
 int GatorTree::returnBalanceFactor(Node *_rootNode) {
 	if (_rootNode == nullptr) {
 		return 0;
@@ -304,37 +291,36 @@ int GatorTree::returnBalanceFactor(Node *_rootNode) {
 	}
 }
 
-// Balance GatorTree
+//balance the tree
 Node *GatorTree::balanceTree(Node *_rootNode) {
 	int balanceFactor = returnBalanceFactor(_rootNode);
 	int rightBalanceFactor = returnBalanceFactor(_rootNode->right);
 	int leftBalanceFactor = returnBalanceFactor(_rootNode->left);
-	// If tree is right heavy
+	//right heavy tree
 	if (balanceFactor <= -2) {
 
-		// If right subtree is left heavy
+		//right subtree heavy
 		if (rightBalanceFactor >= 1) {
-			// Perform RIGHT LEFT rotation
+			//right left rotation
 			_rootNode = rotateRightLeft(_rootNode);
 		} else {
-			// Perform LEFT rotation
+			//left rotation
 			_rootNode = rotateLeft(_rootNode);
 		}
 
 
 	}
-		// If tree is left heavy
+	//left heavy tree
 	else if (balanceFactor >= 2) {
-		// If left subtree is right heavy
+		//left subtree heavy
 		if (leftBalanceFactor <= -1) {
-			// Perform LEFT RIGHT rotation
+			//left right rotation
 			_rootNode = rotateLeftRight(_rootNode);
 
 		} else {
-			// Perform RIGHT rotation
+			//right rotation
 			_rootNode = rotateRight(_rootNode);
 		}
-
 	}
 	return _rootNode;
 }

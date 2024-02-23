@@ -4,39 +4,54 @@
 
 TEST_CASE("Test incorrect commands") {
     
-    // SECTION("Inserting with invalid name") {
+    SECTION("Inserting with invalid name") {
         GatorTree tree;
-        // string input = "insert \"huy\" 97722812";
+        string input = "insert \"b0b\" 12345678";
         // string expected = "unsuccessful\n";
 
-        std::ostringstream oss;
-        streambuf* coutBuffer = std::cout.rdbuf();
-        std::cout.rdbuf(oss.rdbuf());
+        std::ostringstream buffer;
+        std::streambuf* coutBuffer = std::cout.rdbuf();
+        std::cout.rdbuf(buffer.rdbuf());
 
-        // Call the function that prints to cout
-        // runInput(tree, input);
-        std::cout << "unsuccessful" << endl;
-        
+        // Print something to std::cout
+        runInput(tree, input);
 
-        // // Check if the output matches the expected string
+        // Get the captured string
+        std::string capturedOutput = buffer.str();
+
+        // Restore cout
         std::cout.rdbuf(coutBuffer);
 
-        REQUIRE(oss.str() == "unsuccessful\n");
+        // Call the function that prints to cout
+        std::string expectedOutput = "successful\n";
+        REQUIRE(capturedOutput == "unsuccessful\n");
+    }
+
+    SECTION("Inserting with invalid name") {
+        GatorTree tree;
+        string input = "insert \"b0b\" 12345678";
+        // string expected = "unsuccessful\n";
+
+        std::ostringstream buffer;
+        std::streambuf* coutBuffer = std::cout.rdbuf();
+        std::cout.rdbuf(buffer.rdbuf());
+
+        // Print something to std::cout
+        runInput(tree, input);
+
+        // Get the captured string
+        std::string capturedOutput = buffer.str();
+
         // Restore cout
-        // REQUIRE(true);
-    // }
-}
+        std::cout.rdbuf(coutBuffer);
 
-    // SECTION("Inserting with missing quotation marks") {
-    //     tree.insertAllocatedRoot(12345678, "Alice");
-    //     tree.insertAllocatedRoot(23456789, "Bob");
-
-    //     // Try to insert without quotation marks around name
-    //     tree.insertAllocatedRoot(45679999, "Eve");
-    // }
+        // Call the function that prints to cout
+        std::string expectedOutput = "successful\n";
+        REQUIRE(capturedOutput == "unsuccessful\n");
+    }
 
     // Add more test cases for incorrect commands as needed
-
+}
 // TEST_CASE("Test edge cases") {
 //     GatorTree tree;
 

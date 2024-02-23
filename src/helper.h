@@ -2,81 +2,129 @@
 #include <limits>
 #pragma once
 
-//Support function to split the command to take in input and put in a vector
-vector<string> split(const string& command, char delimiter) {
-    vector<string> result;
-    stringstream inp(command);
-    string elm;
-    while (getline(inp, elm, delimiter)) {
-        result.push_back(elm);
+//Separate the first command and check if there are anything left after it
+pair<string, bool> getFirstWord(const string& str) {
+    // Find the position of the first space character
+    size_t pos = str.find(' ');
+
+    // If no space is found, return the whole string
+    if (pos == string::npos) {
+        return make_pair(str, false);
     }
-    return result;
+
+    // Return the first word and indicate there's something left in the string
+    return make_pair(str.substr(0, pos), true);
 }
 
+//Run the command
 void runInput(GatorTree& tree ,string command) {
-    vector<string> inp = split(command, ' ');
+    auto check = getFirstWord(command);
+    string method = check.first;
+    bool notEmpty = check.second;
 
-    if (inp[0] == "insert" && inp.size() == 3) {
+    if (method == "insert" && notEmpty) {
         // Insert command
-        if (inp[1].size() > 2 && inp[1].front() == '"' && inp[1].back() == '"' && inp[2].find_first_not_of("0123456789") == string::npos) {
-            // Valid format
-            string name = inp[1].substr(1, inp[1].size() - 2); // Remove quotes
-            if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == string::npos) {
-                int id = stoi(inp[2]);
-                tree.insertAllocatedRoot(id, name);
-            } else {
-                cout << "unsuccessful" << endl;
-            }
-            
-        } else {
+        string restCommand = command.substr(method.length() + 1);
+        size_t firstQuotePos = restCommand.find('"');
+        size_t secondQuotePos = restCommand.find('"', firstQuotePos + 1);
+        bool valid = true;
+        if (firstQuotePos == std::string::npos) {
             cout << "unsuccessful" << endl;
+            valid = false;
+        } else if (secondQuotePos == std::string::npos) {
+            cout << "unsuccessful" << endl;
+            valid = false;
         }
-    } else if (inp[0] == "remove" && inp.size() == 2) {
+        if (valid) {
+            string name = restCommand.substr(firstQuotePos + 1, secondQuotePos - firstQuotePos - 1);
+            string id = restCommand.substr(secondQuotePos + 2, restCommand.length() - 1);
+            if (id.find_first_not_of("0123456789") == string::npos) {
+                // Valid format
+                int temp = 0;
+                int temp2 = 0;
+                for (char ch : name) {
+                    if (isalpha(ch) == 0) {
+                        temp++;
+                    }
+                } 
+                for (char ch : name) {
+                    if (isspace(ch) == 0) {
+                        temp2++;
+                    }
+                }
+                if (temp != 0 && temp2 != 0) {
+                    cout << "unsuccessful" << endl;
+
+                } else {
+                    int gatorId = stoi(id);
+                    tree.insertAllocatedRoot(gatorId, name);
+                }
+            }  
+        }
+    } else if (method == "remove" && notEmpty) {
+        string restCommand = command.substr(method.length() + 1);
         // Remove command
-        if (inp[1].find_first_not_of("0123456789") == string::npos) {
-            int id = stoi(inp[1]);
+        if (restCommand.find_first_not_of("0123456789") == string::npos) {
+            int id = stoi(restCommand);
             tree.removeAllocatedRoot(id);
         } else {
             cout << "unsuccessful" << endl;
         }
         
-    } else if (inp[0] == "search" && inp.size() == 2) {
-        // Search command
-        if (inp[1].find_first_not_of("0123456789") == string::npos) {
+    } else if (method == "search") {      // Search command
+        string restCommand = command.substr(method.length() + 1);
+
+        //Check if search by name or ID
+        if (restCommand.find_first_not_of("0123456789") == string::npos) {
             // Search by ID
-            int id = stoi(inp[1]);
+            int id = stoi(restCommand);
             int isValid = 0;
-            tree.searchName(tree.rootNode, id, isValid);
+            tree.searchID(tree.rootNode, id, isValid);
             tree.existChecker(isValid);
-        } else if (inp[1].size() > 2 && inp[1].front() == '"' && inp[1].back() == '"') {
+        } else if (restCommand.front() == '"' && restCommand.back() == '"') {
             // Search by NAME
-            string name = inp[1].substr(1, inp[1].size() - 2); // Remove quotes
-            if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == string::npos) {
-                int isValid = 0;
-                tree.searchID(tree.rootNode, name, isValid);
-                tree.existChecker(isValid);
-            } else {
-                cout << "unsuccessful" << endl;
+            string name = restCommand.substr(1, restCommand.size() - 2); // Remove quotes
+            int temp = 0;
+            int temp2 = 0;
+            for (char ch : name) {
+                if (isalpha(ch) == 0) {
+                    temp++;
+                }
+            } 
+            for (char ch : name) {
+                if (isspace(ch) == 0) {
+                    temp2++;
+                }
             }
+            if (temp != 0 && temp2 != 0) {
+                cout << "unsuccessful" << endl;
+
+            } else {
+                int isValid = 0;
+                tree.searchName(tree.rootNode, name, isValid);
+                tree.existChecker(isValid);
+            }
+            
         } else {
             cout << "unsuccessful" << endl;
         }
-    } else if (inp[0] == "printInorder" && inp.size() == 1) {
+    } else if (method == "printInorder" && !notEmpty) {
         // Print inorder command
         tree.printInOrder(tree.rootNode);
-    } else if (inp[0] == "printPreorder" && inp.size() == 1) {
+    } else if (method == "printPreorder" && !notEmpty) {
         // Print preorder command
         tree.printPreOrder(tree.rootNode);
-    } else if (inp[0] == "printPostorder" && inp.size() == 1) {
+    } else if (method == "printPostorder" && !notEmpty) {
         // Print postorder command
         tree.printPostOrder(tree.rootNode);
-    } else if (inp[0] == "printLevelCount" && inp.size() == 1) {
+    } else if (method == "printLevelCount" && !notEmpty) {
         // Print level count command
         tree.printLevelCount(tree.rootNode);
-    } else if (inp[0] == "removeInorder" && inp.size() == 2) {
+    } else if (method == "removeInorder") {
         // Remove by inorder traversal index
-        if (inp[1].find_first_not_of("0123456789") == string::npos) {
-            int N = stoi(inp[1]);
+        string restCommand = command.substr(method.length() + 1);
+        if (restCommand.find_first_not_of("0123456789") == string::npos) {
+            int N = stoi(restCommand);
             tree.removeInOrder(tree.rootNode, N);
         } else {
             cout << "unsuccessful" << endl;

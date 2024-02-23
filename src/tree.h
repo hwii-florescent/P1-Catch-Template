@@ -5,7 +5,8 @@
 #pragma once
 
 using namespace std;
-struct Node {
+
+struct Node {       //create Struct for Nodes
     int gatorId;
     string studentName;
     Node* left;
@@ -20,38 +21,36 @@ public:
     Node *rootNode;
     int treeHeight;
 
-    GatorTree() : rootNode(nullptr) {}
-
-    ~GatorTree() {
-        deleteTree(rootNode);
+    GatorTree() : rootNode(nullptr) {}      //constructor
+    ~GatorTree() {      //default destructor
+        if (rootNode != nullptr) {
+            deleteTree(rootNode);    
+        }
     }
+    void deleteTree(Node *_rootNode);       //destructor
 
-    // Destructor for the GatorTree
-    void deleteTree(Node *_rootNode);
-
-    // Insertion method - based on lecture slides
-    Node *insert(Node *_rootNode, int _id, string _name);
-    Node *getInorderSuccessor(Node *rightSubNode);
-    Node *removeID(Node *_rootNode, int _id);
-    void insertAllocatedRoot(int _id, string _name);
-    void removeAllocatedRoot(int _id);
-    int findLevelCount(Node *_rootNode);
-    void printLevelCount(Node *_rootNode);
-    void inOrder(Node *_rootNode, vector<string> &traversalVector);
-    void inOrderNodes(Node *_rootNode, vector<Node *> &traversalVector);
-    void postOrder(Node *_rootNode, vector<string> &traversalVector);
-    void preOrder(Node *_rootNode, vector<string> &traversalVector);
-    void printInOrder(Node *_rootNode);
-    void printPreOrder(Node *_rootNode);
-    void printPostOrder(Node *_rootNode);
-    int searchID(Node *_rootNode, string name, int &isValid);
-    int existChecker(int condition);
-    int searchName(Node *_rootNode, int _id, int &isValid);
-    void removeInOrder(Node *_rootNode, int N);
-    Node *rotateLeft(Node *_rootNode);
-    Node *rotateRight(Node *_rootNode);
-    Node *rotateLeftRight(Node *_rootNode);
-    Node *rotateRightLeft(Node *_rootNode);
-    int returnBalanceFactor(Node *_rootNode);
-    Node *balanceTree(Node *_rootNode);
+    Node *insert(Node *_rootNode, int _id, string _name);       //insert method and balance the tree
+    Node *getInorderSuccessor(Node *rightSubNode);          //go through the bottom left from a node
+    Node *removeID(Node *_rootNode, int _id);       //remove a node through the id
+    void insertAllocatedRoot(int _id, string _name);        //call the insert method and the findLevelCount to store the tree height
+    void removeAllocatedRoot(int _id);      //call the remove method and the findLevelCount to store the tree height
+    int findLevelCount(Node *_rootNode);    //traverse through the tree to find the level of the tree
+    void printLevelCount(Node *_rootNode);      //print out the tree's height
+    void inOrder(Node *_rootNode, vector<string> &traversalVector);     //traverse through all the nodes and store the name in inorder traversal
+    void inOrderNodes(Node *_rootNode, vector<Node *> &traversalVector);        //traverse through all the nodes and store the Node object in inorder traversal
+    void postOrder(Node *_rootNode, vector<string> &traversalVector);       //traverse through all the nodes and store the name in postorder traversal
+    void preOrder(Node *_rootNode, vector<string> &traversalVector);        //traverse through all the nodes and store the name in preorder traversal
+    void printInOrder(Node *_rootNode);     //print the node in in order traversal
+    void printPreOrder(Node *_rootNode);    //print the node in pre order traversal
+    void printPostOrder(Node *_rootNode);   //print the node in post order traversal
+    int searchName(Node *_rootNode, string name, int &isValid);     //search the node by name and print out the id
+    int existChecker(int condition);    //check if search method find anything, print out unsuccessful otherwise
+    int searchID(Node *_rootNode, int _id, int &isValid);   //search the node by ID and print out the name
+    void removeInOrder(Node *_rootNode, int N);     //remove the Nth ID from in order traversal
+    Node *rotateLeft(Node *_rootNode);      //tree left rotation
+    Node *rotateRight(Node *_rootNode);     //right rotation
+    Node *rotateLeftRight(Node *_rootNode);     //left-right rotation
+    Node *rotateRightLeft(Node *_rootNode);     //right-left rotation
+    int returnBalanceFactor(Node *_rootNode);       //check the level to find balance factor
+    Node *balanceTree(Node *_rootNode);     //balance the tree
 };
