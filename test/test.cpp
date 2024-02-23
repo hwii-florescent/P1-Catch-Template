@@ -288,3 +288,28 @@
 //         REQUIRE(capturedOutput == "successful\n");
 //     }
 // }
+
+// TEST_CASE("Insert and Remove Multiple Nodes", "[Tree]") {
+//     Tree tree;
+//     std::srand(std::time(nullptr)); // Seed for random generation
+//     std::vector<int> ids(100);
+//     std::iota(ids.begin(), ids.end(), 1); // Fill ids with 1 to 100
+
+//     // Insert nodes
+//     for (int id : ids) {
+//         tree.insertAllocatedRoot(id, "Student" + std::to_string(id));
+//     }
+
+//     // Shuffle ids and remove 10 random nodes
+//     std::random_shuffle(ids.begin(), ids.end());
+//     for (int i = 0; i < 10; ++i) {
+//         tree.removeAllocatedRoot(ids[i]);
+//     }
+
+//     // Check in order - assuming inOrder function correctly fills traversalVector
+//     std::vector<std::string> traversalVector;
+//     tree.inOrder(tree.root, traversalVector);
+//     REQUIRE(traversalVector.size() == 90);
+//     std::cout << "Insert and Remove Multiple Nodes passed.\n";
+//     // More detailed checks can be added here, such as verifying the contents of traversalVector
+// }
